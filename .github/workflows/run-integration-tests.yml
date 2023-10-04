@@ -30,25 +30,19 @@ jobs:
 
       - name : Install MySql
         run : |
+          sudo service mysql stop
           sudo apt-get update
-          sudo apt-get install mysql-server -y
-
-      - name : Start MySql
-        run : sudo service mysql start
-
-
-      - name : Create Database
-        run : mysql --user=root --password=root -e "CREATE DATABASE IF NOT EXISTS cloud_computing_project;"
-
-      - name : Check Sql status
-        run : |
-          mysql --version
-          sudo service mysql status
-
+          
+      - name: Set up MariaDB
+        uses: getong/mariadb-action@v1.1
+        with:
+          host port: 3306 # Optional, default value is 3306. The port of host
+          mysql database: 'cloud_computing_project' # Optional, default value is "test". The specified database which will be create
+          mysql root password: root # Required if "mysql user" is empty, default is empty. The root superuser password
+      
 
       - name : Build with Maven
         run : mvn clean install -B
-
 
 
       - name: Upload test results
