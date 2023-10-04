@@ -44,7 +44,7 @@ public class AccountService {
         BufferedReader fileReader;
         try{
             log.debug("Reading data from the file");
-            fileReader = new BufferedReader(new FileReader("C:\\Users\\srika\\Downloads\\users.csv"));
+            fileReader = new BufferedReader(new FileReader("opt/users.csv"));
             log.debug("Data access completed, validating the data before proceeding with account creation");
             line = fileReader.readLine();
             data = line.split(",");
