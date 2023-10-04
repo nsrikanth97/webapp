@@ -1,28 +1,32 @@
 package edu.neu.csye6225.controller;
 
 
+import edu.neu.csye6225.annotations.AuthenticateRequest;
 import edu.neu.csye6225.services.HealthCheckService;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.datasource.DriverManagerDataSource;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.sql.SQLException;
-import java.util.concurrent.TimeUnit;
-
 @RestController
 @RequestMapping("/healthz")
 public class HealthCheckController {
 
+    private final HealthCheckService healthCheckService;
+
+    private final HttpServletRequest request;
+
     @Autowired
-    private HealthCheckService healthCheckService;
+    public HealthCheckController(HealthCheckService healthCheckService, HttpServletRequest request){
+        this.healthCheckService = healthCheckService;
+        this.request = request;
+    }
 
 
     @GetMapping
@@ -33,10 +37,11 @@ public class HealthCheckController {
         headers.set("Cache-Control", "no-cache, no-store, must-revalidate");
         headers.set("Pragma", "no-cache");
         headers.set("X-Content-Type-Options", "nosniff");
-        if(body != null) {
+        if(body != null || StringUtils.hasLength(request.getQueryString())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .headers(headers).build();
         }
+
         if(healthCheckService.isDatabaseConnected()) {
             status = HttpStatus.OK;
         } else {
@@ -44,7 +49,6 @@ public class HealthCheckController {
         }
         return ResponseEntity.status(status)
                 .headers(headers).build();
-
     }
 
 
