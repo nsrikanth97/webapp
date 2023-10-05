@@ -6,7 +6,9 @@ import edu.neu.csye6225.dto.Response;
 import edu.neu.csye6225.entity.Assignment;
 import edu.neu.csye6225.services.AssignmentService;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.ConstraintViolation;
 import jakarta.validation.Valid;
+import jakarta.validation.Validator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,8 +17,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 @RestController
 @RequestMapping("v1/assignments")
@@ -27,10 +28,13 @@ public class AssignmentController {
 
     private final HttpServletRequest request;
 
+    private final Validator validator;
+
     @Autowired
-    public AssignmentController(AssignmentService assignmentService, HttpServletRequest request){
+    public AssignmentController(AssignmentService assignmentService, HttpServletRequest request, Validator validator){
         this.assignmentService = assignmentService;
         this.request = request;
+        this.validator =validator;
     }
 
     @GetMapping
@@ -57,11 +61,21 @@ public class AssignmentController {
 
     @PostMapping
     @AuthenticateRequest
-    public ResponseEntity<Object> createAssignment(@Valid @RequestBody Assignment assignment){
-
-        if(StringUtils.hasLength(request.getQueryString())) {
+    public ResponseEntity<Object> createAssignment(@RequestBody(required = false) Assignment assignment){
+        if(StringUtils.hasLength(request.getQueryString()) || assignment == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+        Map<String, String> hashMap = new HashMap<>();
+        Set<ConstraintViolation<Assignment>> violations = validator.validate(assignment);
+        if (!violations.isEmpty()){
+            violations
+                    .forEach( t -> hashMap.put(t.getPropertyPath().toString(),t.getMessage()));
+            Response<Map<String,String>> response = new Response<>();
+            response.setStatus(Response.ReturnStatus.FAILURE);
+            response.setData(hashMap);
+            return ResponseEntity.badRequest().body(response);
+        }
+
         return ResponseEntity.ok(assignmentService.save(assignment));
     }
 
@@ -76,10 +90,21 @@ public class AssignmentController {
 
     @PutMapping("/{id}")
     @AuthenticateRequest
-    public ResponseEntity<Object> updateAssignment(@RequestBody @Valid Assignment assignment,
+    public ResponseEntity<Object> updateAssignment(@RequestBody(required = false) Assignment assignment,
                                                    @PathVariable UUID id){
-        if(StringUtils.hasLength(request.getQueryString())) {
+        if(StringUtils.hasLength(request.getQueryString()) || assignment == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+
+        Map<String, String> hashMap = new HashMap<>();
+        Set<ConstraintViolation<Assignment>> violations = validator.validate(assignment);
+        if (!violations.isEmpty()){
+            violations
+                    .forEach( t -> hashMap.put(t.getPropertyPath().toString(),t.getMessage()));
+            Response<Map<String,String>> response = new Response<>();
+            response.setStatus(Response.ReturnStatus.FAILURE);
+            response.setData(hashMap);
+            return ResponseEntity.badRequest().body(response);
         }
         return assignmentService.updateAssignment(id,assignment);
     }

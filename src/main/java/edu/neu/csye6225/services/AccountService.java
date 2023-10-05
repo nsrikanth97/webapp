@@ -87,6 +87,7 @@ public class AccountService {
                     newAccount.setEmail(data[2]);
                     newAccount.setPassword(BCrypt.hashpw(data[3],BCrypt.gensalt()));
                     newAccount.setAccountCreated(new Timestamp(System.currentTimeMillis()));
+                    newAccount.setAccountUpdated(new Timestamp(System.currentTimeMillis()));
                     newAccount = accountRepository.save(newAccount);
                     if(newAccount.getId()!= null){
                         log.info("User account created successfully for user with email: " + newAccount.getEmail());
