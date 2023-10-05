@@ -76,7 +76,7 @@ public class AssignmentController {
             return ResponseEntity.badRequest().body(response);
         }
 
-        return ResponseEntity.ok(assignmentService.save(assignment));
+        return ResponseEntity.status(201).body(assignmentService.save(assignment));
     }
 
     @DeleteMapping("/{id}")
