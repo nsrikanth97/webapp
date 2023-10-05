@@ -28,7 +28,7 @@ jobs:
       - name : Verify maven version
         run : mvn -version
 
-      - name : Install MySql
+      - name : Stop MySql
         run : |
           sudo service mysql stop
           sudo apt-get update

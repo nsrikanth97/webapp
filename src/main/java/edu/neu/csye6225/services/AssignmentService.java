@@ -60,6 +60,7 @@ public class AssignmentService {
             return assignmentResponse;
         }
         assignment.setAssignmentCreated(LocalDateTime.now());
+        assignment.setAssignmentUpdated(LocalDateTime.now());
         UUID id = (UUID) request.getSession().getAttribute("accountId");
         if(id == null){
             assignmentResponse.setStatus(Response.ReturnStatus.FAILURE);
@@ -92,9 +93,7 @@ public class AssignmentService {
                 response = ResponseEntity.status(HttpStatus.FORBIDDEN).body(assignmentResponse);
             }else{
                 assignmentRepository.delete(assignment.get());
-                assignmentResponse.setStatus(Response.ReturnStatus.SUCCESS);
-                assignmentResponse.setData("Deleted assignment with ID :" + id);
-                response = ResponseEntity.status(HttpStatus.OK).body(assignmentResponse);
+                response = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
             }
         }
         return response;
@@ -122,10 +121,8 @@ public class AssignmentService {
                 assignment.setDeadline(updated.getDeadline());
                 assignment.setPoints(updated.getPoints());
                 assignment.setNumOfAttempts(updated.getNumOfAttempts());
-                updated = assignmentRepository.save(assignment);
-                assignmentResponse.setStatus(Response.ReturnStatus.SUCCESS);
-                assignmentResponse.setData(updated);
-                response = ResponseEntity.status(HttpStatus.OK).body(assignmentResponse);
+                assignmentRepository.save(assignment);
+                response = ResponseEntity.status(HttpStatus.NO_CONTENT).build();
             }
         }
         return response;

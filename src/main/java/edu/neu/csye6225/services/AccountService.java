@@ -118,7 +118,8 @@ public class AccountService {
             return false;
         }
         Account account = accountRepository.findUserByEmail(email);
-        if(BCrypt.checkpw(password, account.getPassword())){
+
+        if(null != account && BCrypt.checkpw(password, account.getPassword())){
             log.info("Email and password match for provided details, authentication successful");
             HttpSession session = request.getSession();
             session.setAttribute("accountId", account.getId());
