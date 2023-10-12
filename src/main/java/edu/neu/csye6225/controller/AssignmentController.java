@@ -44,10 +44,10 @@ public class AssignmentController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
         List<Assignment> assignmentList = assignmentService.getAll();
-        Response<List<Assignment>> response = new Response<>();
-        response.setData(assignmentList);
-        response.setStatus(Response.ReturnStatus.SUCCESS);
-        return ResponseEntity.ok(response);
+        if(assignmentList.isEmpty()){
+            ResponseEntity.status(404);
+        }
+        return ResponseEntity.ok(assignmentList);
     }
 
     @GetMapping("/{id}")
@@ -56,7 +56,11 @@ public class AssignmentController {
         if(body != null || StringUtils.hasLength(request.getQueryString())) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
-        return ResponseEntity.ok(assignmentService.getAssignmentById(id));
+        Response<Assignment> assignmentResponse = assignmentService.getAssignmentById(id);
+        if(assignmentResponse.getStatus().equals(Response.ReturnStatus.SUCCESS)){
+            return  ResponseEntity.ok(assignmentResponse.getData());
+        }
+        return ResponseEntity.status(404).body(assignmentResponse);
     }
 
     @PostMapping
