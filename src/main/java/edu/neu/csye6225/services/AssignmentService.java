@@ -10,11 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.sql.Date;
-import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -50,7 +46,7 @@ public class AssignmentService {
         return response;
     }
 
-    public Response<Assignment> save(Assignment assignment){
+    public Object save(Assignment assignment){
         Response<Assignment> assignmentResponse = new Response<>();
         if(assignment.getId() != null){
             assignmentResponse.setStatus(Response.ReturnStatus.FAILURE);
@@ -70,10 +66,7 @@ public class AssignmentService {
             return assignmentResponse;
         }
         assignment.setAccount(accountService.getAccountById(id));
-        Assignment newAssignment = assignmentRepository.save(assignment);
-        assignmentResponse.setStatus(Response.ReturnStatus.SUCCESS);
-        assignmentResponse.setData(newAssignment);
-        return assignmentResponse;
+        return assignmentRepository.save(assignment);
     }
 
     public ResponseEntity<Object> deleteAssignment(UUID id){
@@ -83,7 +76,7 @@ public class AssignmentService {
         if(assignment.isEmpty()){
             assignmentResponse.setStatus(Response.ReturnStatus.FAILURE);
             assignmentResponse.getErrorMessages().add("Assignment with ID not available");
-            response = ResponseEntity.ok().body(assignmentResponse);
+            response = ResponseEntity.status(400).body(assignmentResponse);
         }else{
             UUID accountId =assignment.get().getAccount().getId();
             UUID loggedId = (UUID) request.getSession().getAttribute("accountId");
