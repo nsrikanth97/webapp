@@ -11,12 +11,19 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name : Install packer
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
 
       - name: Update system
         run: |
           sudo apt update
           sudo apt upgrade -y
+
+      - name: AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
 
       - name: Install packer
         run: |
@@ -27,11 +34,17 @@ jobs:
       - name: Check packer version
         run: packer --version
 
+      - name: Check packer version
+        run: packer init ./packer/.
+
       - name: Packer format
         run : packer fmt ./packer/.
 
       - name: Packer Validate
         run : packer validate ./packer/.
+
+      - name: Check Aws configuration
+        run: aws configure list
 
 
 
