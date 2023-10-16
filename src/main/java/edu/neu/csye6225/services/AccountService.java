@@ -9,6 +9,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCrypt;
 import org.springframework.stereotype.Service;
 
@@ -28,6 +29,9 @@ public class AccountService {
 
     private final HttpServletRequest request;
 
+    @Value("${FILE_PATH}")
+    String filePath;
+
     @Autowired
     public AccountService(AccountRepository accountRepository, HttpServletRequest request){
         this.accountRepository = accountRepository;
@@ -44,7 +48,7 @@ public class AccountService {
         BufferedReader fileReader;
         try{
             log.debug("Reading data from the file");
-            fileReader = new BufferedReader(new FileReader("opt/users.csv"));
+            fileReader = new BufferedReader(new FileReader(filePath));
             log.debug("Data access completed, validating the data before proceeding with account creation");
             line = fileReader.readLine();
             data = line.split(",");

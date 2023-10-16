@@ -1,0 +1,28 @@
+#!/bin/bash
+
+# Update the package list and upgrade existing packages
+sudo apt update
+sudo apt upgrade -y
+
+# Install MariaDB
+sudo apt install mariadb-server -y
+
+
+# Install Java (OpenJDK)
+sudo apt install openjdk-17-jdk -y
+
+# Install Maven
+sudo apt install maven -y
+
+# Print installed versions for verification
+java -version
+mvn -version
+
+echo "MariaDB, Java, Git and Maven have been installed."
+
+#Add webapp user to the mariadb server installed in the AMI
+mysql -u root <<EOF
+CREATE USER 'webapp'@'localhost' IDENTIFIED BY 'webapp';
+GRANT ALL PRIVILEGES ON *.* TO 'webapp'@'localhost' WITH GRANT OPTION;
+FLUSH PRIVILEGES;
+EOF
