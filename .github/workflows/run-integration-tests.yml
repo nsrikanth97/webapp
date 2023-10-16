@@ -47,6 +47,11 @@ jobs:
           FILE_PATH :  ${{ secrets.FILE_PATH }}
         run : mvn clean verify
 
+      - name : Check the files
+        run : |
+            ls -l
+            ls -l target
+
 
       - name: Upload test results
         uses: actions/upload-artifact@v2
