@@ -4,9 +4,6 @@ on:
   pull_request:
     branches:
       - main
-    types:
-      - opened
-      - edited
 
 jobs:
   build:
@@ -43,7 +40,7 @@ jobs:
 
       - name : Build with Maven
         env:
-          DB_USER: ${{ secrets.DB_USERNAME }},
+          DB_USER: ${{ secrets.DB_USER }},
           DB_NAME: ${{ secrets.DB_NAME }},
           DB_PASS : ${{ secrets.DB_PASS }},
           DB_PORT : ${{ secrets.DB_PORT }},
