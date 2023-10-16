@@ -10,12 +10,9 @@ sudo apt install mariadb-server -y
 # Install Java (OpenJDK)
 sudo apt install openjdk-17-jdk -y
 
-# Install Maven
-sudo apt install maven -y
-
 # Print installed versions for verification
 java -version
-mvn -version
+
 
 echo "MariaDB, Java, Git and Maven have been installed."
 

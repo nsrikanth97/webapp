@@ -1,16 +1,17 @@
 name: Run Integration Tests
 
+
 on:
   pull_request:
     branches:
       - main
 
 jobs:
-  build:
+  create-ami:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
+      - name : Checkout code
         uses: actions/checkout@v4
 
       - name: Setup up java
@@ -18,38 +19,35 @@ jobs:
         with:
           java-version: '17'
           distribution: 'adopt'
-          
-      - name : Verify java version
-        run : java -version
-        
-      - name : Verify maven version
-        run : mvn -version
 
-      - name : Stop MySql
-        run : |
+      - name: Verify java version
+        run: java -version
+
+      - name: Verify maven version
+        run: mvn -version
+
+      - name: Stop MySql
+        run: |
           sudo service mysql stop
           sudo apt-get update
-          
+
       - name: Set up MariaDB
         uses: getong/mariadb-action@v1.1
         with:
           host port: ${{secrets.DB_PORT}} # Optional, default value is 3306. The port of host
           mysql database: ${{ secrets.DB_NAME}} # Optional, default value is "test". The specified database which will be create
-          mysql root password:  ${{ secrets.DB_PASS }} # Required if "mysql user" is empty, default is empty. The root superuser password
-      
+          mysql root password: ${{ secrets.DB_PASS }}
 
-      - name : Build with Maven
+      - name: Build with Maven
         env:
           DB_USER: ${{ secrets.DB_USER }}
           DB_NAME: ${{ secrets.DB_NAME }}
-          DB_PASS : ${{ secrets.DB_PASS }}
-          DB_PORT : ${{ secrets.DB_PORT }}
-          FILE_PATH :  ${{ secrets.FILE_PATH }}
-        run : mvn clean verify
+          DB_PASS: ${{ secrets.DB_PASS }}
+          DB_PORT: ${{ secrets.DB_PORT }}
+          FILE_PATH: ${{ secrets.FILE_PATH }}
+        run: mvn clean install
+
+      - name: Packer Build
+        run: packer build  ./packer/webapp.pkr.hcl
 
 
-      - name: Upload test results
-        uses: actions/upload-artifact@v2
-        with:
-          name: test-results
-          path: target/surefire-reports

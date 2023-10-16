@@ -33,8 +33,6 @@ variable "temp" {
 }
 
 source "amazon-ebs" "webapp-ami" {
-  access_key = "AKIA5NJXCNZ4V2ZUPXGL"
-  secret_key = "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"
   region          = "us-east-1"
   ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = "AMI for CSYE 6225"
