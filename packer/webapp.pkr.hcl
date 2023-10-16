@@ -27,8 +27,14 @@ variable "subnet_id" {
   default = "subnet-080382b92edfd20b8"
 }
 
+variable "temp" {
+  type = bool
+  default = true
+}
 
 source "amazon-ebs" "webapp-ami" {
+  access_key = "AKIA5NJXCNZ4V2ZUPXGL"
+  secret_key = "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"
   region          = "us-east-1"
   ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = "AMI for CSYE 6225"
@@ -51,9 +57,9 @@ source "amazon-ebs" "webapp-ami" {
 }
 
 
-build {
+build{
   sources = ["source.amazon-ebs.webapp-ami"]
-
+  name= "file-names"
   provisioner "file" {
     source      = "./target/csye6225-0.0.1-SNAPSHOT.jar"
     destination = "/tmp/csye6225-0.0.1-SNAPSHOT.jar"
@@ -62,6 +68,18 @@ build {
     source      = "./opt/users.csv"
     destination = "/tmp/users.csv"
   }
+}
+build  {
+  name= "script"
+  sources = ["source.amazon-ebs.webapp-ami"]
+#  provisioners "file" {
+#    source      = "./target/csye6225-0.0.1-SNAPSHOT.jar"
+#    destination = "/tmp/csye6225-0.0.1-SNAPSHOT.jar"
+#  }
+#  provisioner "file" {
+#    source      = "./opt/users.csv"
+#    destination = "/tmp/users.csv"
+#  }
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
