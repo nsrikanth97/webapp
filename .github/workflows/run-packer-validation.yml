@@ -1,0 +1,39 @@
+name: Run packer format and validation
+
+
+on:
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  packer:
+    runs-on: ubuntu-latest
+    steps:
+      - name : Install packer
+        uses: actions/checkout@v2
+
+      - name: Update system
+        run: |
+          sudo apt update
+          sudo apt upgrade -y
+
+      - name: Install packer
+        run: |
+          wget -O- https://apt.releases.hashicorp.com/gpg | sudo gpg --dearmor -o /usr/share/keyrings/hashicorp-archive-keyring.gpg
+          echo "deb [signed-by=/usr/share/keyrings/hashicorp-archive-keyring.gpg] https://apt.releases.hashicorp.com $(lsb_release -cs) main" | sudo tee /etc/apt/sources.list.d/hashicorp.list
+          sudo apt update && sudo apt install packer
+
+      - name: Check packer version
+        run: packer --version
+
+      - name: Packer format
+        run : packer fmt ./packer/.
+
+      - name: Packer Validate
+        run : packer validate ./packer/.
+
+
+
+
+
