@@ -7,6 +7,7 @@ packer {
   }
 }
 
+
 variable "aws_region" {
   type    = string
   default = "us-east-1"
@@ -24,12 +25,21 @@ variable "ssh_username" {
 
 variable "subnet_id" {
   type    = string
-  default = "subnet-080382b92edfd20b8"
+  default = "subnet-00497d9f1e55f8674"
+}
+variable "source_path_jar"{
+  type = string
+  default= ""
 }
 
-variable "temp" {
-  type = bool
-  default = true
+variable "user_name"{
+  type = string
+  default= ""
+}
+
+variable "environment_file"{
+  type = string
+  default= ""
 }
 
 source "amazon-ebs" "webapp-ami" {
@@ -57,9 +67,9 @@ source "amazon-ebs" "webapp-ami" {
 
 build{
   sources = ["source.amazon-ebs.webapp-ami"]
-  name= "file-names"
   provisioner "file" {
-    source      = "./target/csye6225-0.0.1-SNAPSHOT.jar"
+    #./target/csye6225-0.0.1-SNAPSHOT.jar
+    source      = "${var.source_path_jar}"
     destination = "/tmp/csye6225-0.0.1-SNAPSHOT.jar"
   }
   provisioner "file" {
@@ -67,10 +77,16 @@ build{
     destination = "/tmp/users.csv"
   }
 
+  provisioner "file" {
+    source      = "./.env"
+    destination = "/tmp/.env"
+  }
+
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
-      "CHECKPOINT_DISABLE=1"
+      "CHECKPOINT_DISABLE=1",
+      "DB_USER=${var.user_name}"
     ]
     script = "./packer/setup.sh"
   }

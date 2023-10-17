@@ -47,6 +47,15 @@ jobs:
           FILE_PATH: ${{ secrets.FILE_PATH }}
         run: mvn clean install
 
+      - name: Create an .env file
+        run: |
+          touch .env
+          echo DB_USER=${{ secrets.DB_USER_WEBAPP}} >> .env
+          echo DB_NAME=${{ secrets.DB_NAME }} >> .env
+          echo DB_PASS=${{ secrets.DB_PASS }} >> .env
+          echo DB_PORT=${{ secrets.DB_PORT }} >> .env
+          echo FILE_PATH=${{ secrets.FILE_PATH_AMI }} >> .env
+
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
@@ -62,7 +71,7 @@ jobs:
         run: packer validate ./packer/.
 
       - name: Packer Build
-        run: packer build  ./packer/webapp.pkr.hcl
+        run: packer build -var "source_path_jar=./target/csye6225-0.0.1-SNAPSHOT.jar" -var "user_name=webapp" -var "env_file=.env".\packer\webapp.pkr.hcl
 
 
 
