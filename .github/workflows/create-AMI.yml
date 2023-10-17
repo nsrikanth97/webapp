@@ -47,6 +47,14 @@ jobs:
           FILE_PATH: ${{ secrets.FILE_PATH }}
         run: mvn clean install
 
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+          profile: dev
+
       - name: Packer init
         run: packer init ./packer/.
 
@@ -55,5 +63,6 @@ jobs:
 
       - name: Packer Build
         run: packer build  ./packer/webapp.pkr.hcl
+
 
 
