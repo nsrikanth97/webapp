@@ -78,7 +78,7 @@ build{
   }
 
   provisioner "file" {
-    source      = "./.env"
+    source      = "${var.environment_file}"
     destination = "/tmp/.env"
   }
 
