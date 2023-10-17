@@ -2,13 +2,13 @@
 
 # Update the package list and upgrade existing packages
 sudo apt update
-#sudo apt upgrade -y
+sudo apt upgrade -y
 
 # Install MariaDB
 sudo apt install mariadb-server -y
 
 # Install Java (OpenJDK)
-#sudo apt install openjdk-17-jdk -y
+sudo apt install openjdk-17-jdk -y
 
 # Print installed versions for verification
 java -version
