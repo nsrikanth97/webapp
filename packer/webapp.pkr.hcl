@@ -66,18 +66,7 @@ build{
     source      = "./opt/users.csv"
     destination = "/tmp/users.csv"
   }
-}
-build  {
-  name= "script"
-  sources = ["source.amazon-ebs.webapp-ami"]
-#  provisioners "file" {
-#    source      = "./target/csye6225-0.0.1-SNAPSHOT.jar"
-#    destination = "/tmp/csye6225-0.0.1-SNAPSHOT.jar"
-#  }
-#  provisioner "file" {
-#    source      = "./opt/users.csv"
-#    destination = "/tmp/users.csv"
-#  }
+
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
@@ -85,5 +74,4 @@ build  {
     ]
     script = "./packer/setup.sh"
   }
-
 }
