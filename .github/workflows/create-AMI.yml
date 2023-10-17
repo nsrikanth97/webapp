@@ -1,4 +1,4 @@
-name: Run Integration Tests
+name: Create AMI
 
 
 on:
@@ -46,6 +46,12 @@ jobs:
           DB_PORT: ${{ secrets.DB_PORT }}
           FILE_PATH: ${{ secrets.FILE_PATH }}
         run: mvn clean install
+
+      - name: Packer init
+        run: packer init ./packer/.
+
+      - name: Packer validate
+        run: packer validate ./packer/.
 
       - name: Packer Build
         run: packer build  ./packer/webapp.pkr.hcl
