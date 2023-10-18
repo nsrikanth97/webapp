@@ -15,7 +15,7 @@ variable "aws_region" {
 
 variable "source_ami" {
   type    = string
-  default = "ami-06db4d78cb1d3bbf9" # Ubuntu 22.04 LTS
+  default = "ami-06db4d78cb1d3bbf9" # Debian 22.04 LTS
 }
 
 variable "ssh_username" {
@@ -43,7 +43,7 @@ variable "environment_file"{
 }
 
 source "amazon-ebs" "webapp-ami" {
-  region          = "us-east-1"
+  region          = "${var.aws_region}"
   ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = "AMI for CSYE 6225"
   profile         = "dev"
