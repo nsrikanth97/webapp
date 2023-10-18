@@ -4,9 +4,6 @@ on:
   pull_request:
     branches:
       - main
-    types:
-      - opened
-      - edited
 
 jobs:
   build:
@@ -14,10 +11,10 @@ jobs:
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup up java
-        uses: actions/setup-java@v2
+        uses: actions/setup-java@v3
         with:
           java-version: '17'
           distribution: 'adopt'
@@ -36,13 +33,19 @@ jobs:
       - name: Set up MariaDB
         uses: getong/mariadb-action@v1.1
         with:
-          host port: 3306 # Optional, default value is 3306. The port of host
-          mysql database: 'cloud_computing_project' # Optional, default value is "test". The specified database which will be create
-          mysql root password: root # Required if "mysql user" is empty, default is empty. The root superuser password
+          host port: ${{secrets.DB_PORT}} # Optional, default value is 3306. The port of host
+          mysql database: ${{ secrets.DB_NAME}} # Optional, default value is "test". The specified database which will be create
+          mysql root password:  ${{ secrets.DB_PASS }} # Required if "mysql user" is empty, default is empty. The root superuser password
       
 
       - name : Build with Maven
-        run : mvn clean install -B
+        env:
+          DB_USER: ${{ secrets.DB_USER }}
+          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_PASS : ${{ secrets.DB_PASS }}
+          DB_PORT : ${{ secrets.DB_PORT }}
+          FILE_PATH :  ${{ secrets.FILE_PATH }}
+        run : mvn clean verify
 
 
       - name: Upload test results
