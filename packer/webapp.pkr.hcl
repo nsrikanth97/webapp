@@ -27,24 +27,23 @@ variable "subnet_id" {
   type    = string
   default = "subnet-00497d9f1e55f8674"
 }
-variable "source_path_jar"{
-  type = string
-  default= ""
+variable "source_path_jar" {
+  type    = string
+  default = ""
 }
 
-variable "user_name"{
-  type = string
-  default= ""
+variable "user_name" {
+  type    = string
+  default = ""
 }
 
-variable "environment_file"{
-  type = string
-  default= ""
+variable "environment_file" {
+  type    = string
+  default = ""
 }
 
 source "amazon-ebs" "webapp-ami" {
-  region          =
-  "${var.aws_region}"
+  region          = "${var.aws_region}"
   ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = "AMI for CSYE 6225"
   profile         = "dev"
@@ -66,7 +65,7 @@ source "amazon-ebs" "webapp-ami" {
 }
 
 
-build{
+build {
   sources = ["source.amazon-ebs.webapp-ami"]
   provisioner "file" {
     #./target/csye6225-0.0.1-SNAPSHOT.jar
@@ -85,7 +84,7 @@ build{
 
   provisioner "shell" {
     environment_vars = [
-      "DEBIAN_FRONTEND=noninteractive",
+      "DEBIAN_FRONTEND=noninteractive"
       "CHECKPOINT_DISABLE=1",
       "DB_USER=${var.user_name}"
     ]
