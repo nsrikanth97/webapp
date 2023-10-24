@@ -26,7 +26,7 @@ jobs:
         run: packer init ./packer/.
 
       - name: Packer format
-        run : packer fmt ./packer/.
+        run : formatted=$(packer fmt -check ./Packer/.)
 
       - name: Packer Validate
         run : packer validate ./packer/.
