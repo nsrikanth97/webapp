@@ -55,6 +55,12 @@ public class AssignmentService {
                     "to update an assignment use PUT request");
             return assignmentResponse;
         }
+        if(!assignment.getName().matches(".*[a-zA-Z].*")){
+            assignmentResponse.setStatus(Response.ReturnStatus.FAILURE);
+            assignmentResponse.setData(assignment);
+            assignmentResponse.getErrorMessages().add("Assignment name must contain atleast one alphabet");
+            return assignmentResponse;
+        }
         assignment.setAssignmentCreated(LocalDateTime.now());
         assignment.setAssignmentUpdated(LocalDateTime.now());
         UUID id = (UUID) request.getSession().getAttribute("accountId");
@@ -75,8 +81,8 @@ public class AssignmentService {
         Response<String> assignmentResponse = new Response<>();
         if(assignment.isEmpty()){
             assignmentResponse.setStatus(Response.ReturnStatus.FAILURE);
-            assignmentResponse.getErrorMessages().add("Assignment with ID not available");
-            response = ResponseEntity.status(400).body(assignmentResponse);
+            assignmentResponse.getErrorMessages().add("Assignment with ID not found");
+            response = ResponseEntity.status(404).body(assignmentResponse);
         }else{
             UUID accountId =assignment.get().getAccount().getId();
             UUID loggedId = (UUID) request.getSession().getAttribute("accountId");

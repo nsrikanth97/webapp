@@ -7,7 +7,6 @@ packer {
   }
 }
 
-
 variable "aws_region" {
   type    = string
   default = "us-east-1"
@@ -27,27 +26,23 @@ variable "subnet_id" {
   type    = string
   default = "subnet-00497d9f1e55f8674"
 }
-variable "source_path_jar"{
-  type = string
-  default= ""
+variable "source_path_jar" {
+  type    = string
+  default = ""
 }
 
-variable "user_name"{
-  type = string
-  default= ""
+variable "ami_users" {
+  type    = list(string)
+  default = ["362731286542", "921922858617"]
 }
 
-variable "environment_file"{
-  type = string
-  default= ""
-}
 
 source "amazon-ebs" "webapp-ami" {
   region          = "${var.aws_region}"
   ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = "AMI for CSYE 6225"
   profile         = "dev"
-  ami_users       = ["362731286542"]
+  ami_users       = "${var.ami_users}"
   instance_type   = "t2.micro"
   source_ami      = "${var.source_ami}"
   ssh_username    = "${var.ssh_username}"
@@ -65,7 +60,7 @@ source "amazon-ebs" "webapp-ami" {
 }
 
 
-build{
+build {
   sources = ["source.amazon-ebs.webapp-ami"]
   provisioner "file" {
     #./target/csye6225-0.0.1-SNAPSHOT.jar
@@ -76,17 +71,15 @@ build{
     source      = "./opt/users.csv"
     destination = "/tmp/users.csv"
   }
-
   provisioner "file" {
-    source      = "${var.environment_file}"
-    destination = "/tmp/.env"
+    source      = "./packer/web-application.service"
+    destination = "/tmp/web-application.service"
   }
 
   provisioner "shell" {
     environment_vars = [
       "DEBIAN_FRONTEND=noninteractive",
-      "CHECKPOINT_DISABLE=1",
-      "DB_USER=${var.user_name}"
+      "CHECKPOINT_DISABLE=1"
     ]
     script = "./packer/setup.sh"
   }

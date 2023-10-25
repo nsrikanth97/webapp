@@ -69,6 +69,7 @@ public class AssignmentController {
         if(StringUtils.hasLength(request.getQueryString()) || assignment == null) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
         }
+
         Map<String, String> hashMap = new HashMap<>();
         Set<ConstraintViolation<Assignment>> violations = validator.validate(assignment);
         if (!violations.isEmpty()){

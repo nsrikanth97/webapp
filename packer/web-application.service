@@ -1,0 +1,18 @@
+[Unit]
+Description=Starts my web server on port 8080
+ConditionPathExists=/opt/csye6225/application.properties
+After=cloud-final.service
+
+[Service]
+Type=simple
+User=csye6225
+WorkingDirectory=/opt/csye6225/
+ExecStart=/bin/bash -c "source /opt/csye6225/application.properties && /usr/bin/java -jar /opt/csye6225/csye6225-0.0.1-SNAPSHOT.jar"
+StandardOutput=syslog
+StandardError=syslog
+SyslogIdentifier=csye6225
+Restart=always
+RestartSec=5
+
+[Install]
+WantedBy=cloud-init.service
