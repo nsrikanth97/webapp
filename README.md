@@ -7,6 +7,7 @@
       - Port 3306
       - Password for root user should be set as root
     - Maven(3.8.8+)
+    
   
 #Deployment
 
