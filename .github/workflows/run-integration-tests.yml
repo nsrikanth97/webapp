@@ -33,13 +33,14 @@ jobs:
       - name: Set up MariaDB
         uses: getong/mariadb-action@v1.1
         with:
-          host port: ${{secrets.DB_PORT}} # Optional, default value is 3306. The port of host
-          mysql database: ${{ secrets.DB_NAME}} # Optional, default value is "test". The specified database which will be create
-          mysql root password:  ${{ secrets.DB_PASS }} # Required if "mysql user" is empty, default is empty. The root superuser password
+          host port: ${{secrets.DB_PORT}}
+          mysql database: ${{ secrets.DB_NAME}}
+          mysql root password:  ${{ secrets.DB_PASS }}
       
 
       - name : Build with Maven
         env:
+          DB_HOST: ${{ secrets.DB_HOST }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_PASS : ${{ secrets.DB_PASS }}

@@ -26,7 +26,14 @@ jobs:
         run: packer init ./packer/.
 
       - name: Packer format
-        run : packer fmt ./packer/.
+        run : |
+          # Run packer fmt and capture the output
+          output=$(packer fmt -check=true -write=false ./packer/.)
+          if [ -n "$output" ]; then
+            echo "Packer format check failed. Please run 'packer fmt' to fix the formatting issues."
+            echo "$output"
+            exit 1
+          fi
 
       - name: Packer Validate
         run : packer validate ./packer/.

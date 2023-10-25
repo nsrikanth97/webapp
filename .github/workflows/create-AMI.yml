@@ -34,12 +34,13 @@ jobs:
       - name: Set up MariaDB
         uses: getong/mariadb-action@v1.1
         with:
-          host port: ${{secrets.DB_PORT}} # Optional, default value is 3306. The port of host
-          mysql database: ${{ secrets.DB_NAME}} # Optional, default value is "test". The specified database which will be create
+          host port: ${{secrets.DB_PORT}}
+          mysql database: ${{ secrets.DB_NAME}}
           mysql root password: ${{ secrets.DB_PASS }}
 
       - name: Build with Maven
         env:
+          DB_HOST: ${{ secrets.DB_HOST }}
           DB_USER: ${{ secrets.DB_USER }}
           DB_NAME: ${{ secrets.DB_NAME }}
           DB_PASS: ${{ secrets.DB_PASS }}
@@ -47,14 +48,6 @@ jobs:
           FILE_PATH: ${{ secrets.FILE_PATH }}
         run: mvn clean install
 
-      - name: Create an .env file
-        run: |
-          touch .env
-          echo DB_USER=${{ secrets.DB_USER_WEBAPP}} >> .env
-          echo DB_NAME=${{ secrets.DB_NAME }} >> .env
-          echo DB_PASS=${{ secrets.DB_USER_WEBAPP }} >> .env
-          echo DB_PORT=${{ secrets.DB_PORT }} >> .env
-          echo FILE_PATH=${{ secrets.FILE_PATH_AMI }} >> .env
 
       - name: Configure AWS Credentials
         uses: aws-actions/configure-aws-credentials@v4
@@ -62,7 +55,6 @@ jobs:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region: ${{ secrets.AWS_REGION }}
-          profile: dev
 
       - name: Packer init
         run: packer init ./packer/.
@@ -71,7 +63,7 @@ jobs:
         run: packer validate ./packer/.
 
       - name: Packer Build
-        run: packer build -var "source_path_jar=target/csye6225-0.0.1-SNAPSHOT.jar" -var "user_name=${{secrets.user_name}}" -var "environment_file=.env" -var "source_ami=${{secrets.debian_id}}" -var "aws_region=${{secrets.aws_region}}" packer/webapp.pkr.hcl
+        run: packer build -var "source_path_jar=target/csye6225-0.0.1-SNAPSHOT.jar"  -var "source_ami=${{secrets.debian_id}}" -var "aws_region=${{secrets.aws_region}}" packer/webapp.pkr.hcl
 
 
 
