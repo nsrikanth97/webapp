@@ -2,7 +2,7 @@ source "amazon-ebs" "webapp-ami" {
   region          = "${var.aws_region}"
   ami_name        = "csye6225_${formatdate("YYYY_MM_DD_hh_mm_ss", timestamp())}"
   ami_description = "AMI for CSYE 6225"
-  profile         = "dev"
+  profile         = "${var.aws_profile}"
   ami_users       = "${var.ami_users}"
   instance_type   = "${var.instance_type}"
   source_ami      = "${var.source_ami}"

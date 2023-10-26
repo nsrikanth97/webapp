@@ -40,3 +40,8 @@ variable "instance_type" {
   type    = string
   default = "t2.micro"
 }
+
+variable "aws_profile" {
+  type    = string
+  default = "dev"
+}
