@@ -69,6 +69,7 @@ jobs:
               -var "aws_region=${{secrets.aws_region}}" 
               -var "subnet_id=${{secrets.subnet_id}}"
               -var "ssh_username=${{secrets.ssh_username}}"
+              -var "ami_users=${{secrets.ami_users}}"
               packer/.
 
 
