@@ -63,7 +63,14 @@ jobs:
         run: packer validate ./packer/.
 
       - name: Packer Build
-        run: packer build -var "source_path_jar=target/csye6225-0.0.1-SNAPSHOT.jar"  -var "source_ami=${{secrets.debian_id}}" -var "aws_region=${{secrets.aws_region}}" packer/webapp.pkr.hcl
+        run: packer build 
+              -var "source_path_jar=target/csye6225-0.0.1-SNAPSHOT.jar"  
+              -var "source_ami=${{secrets.debian_id}}" 
+              -var "aws_region=${{secrets.aws_region}}" 
+              -var "subnet_id=${{secrets.subnet_id}}"
+              -var "ssh_username=${{secrets.ssh_username}}"
+              -var "ami_users=${{secrets.ami_users}}"
+              packer/.
 
 
 
