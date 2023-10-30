@@ -15,5 +15,6 @@ buildNumber.properties
 .project
 .idea
 .env
+application.log
 # JDT-specific (Eclipse Java Development Tools)
 .classpath
