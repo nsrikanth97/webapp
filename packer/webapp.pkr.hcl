@@ -36,6 +36,10 @@ build {
     source      = "./packer/web-application.service"
     destination = "/tmp/web-application.service"
   }
+  provisioner "file" {
+    source      = "./packer/cloudwatch-config.json"
+    destination = "/tmp/cloudwatch-config.json"
+  }
 
   provisioner "shell" {
     environment_vars = [
