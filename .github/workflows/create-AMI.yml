@@ -34,19 +34,19 @@ jobs:
       - name: Set up MariaDB
         uses: getong/mariadb-action@v1.1
         with:
-          host port: ${{env.DB_PORT}}
-          mysql database: ${{ env.DB_NAME}}
+          host port: ${{vars.DB_PORT}}
+          mysql database: ${{ vars.DB_NAME}}
           mysql root password: ${{ secrets.DB_PASS }}
 
       - name: Build with Maven
         env:
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_USER: ${{ secrets.DB_USER }}
-          DB_NAME: ${{ env.DB_NAME }}
+          DB_NAME: ${{ vars.DB_NAME }}
           DB_PASS: ${{ secrets.DB_PASS }}
-          DB_PORT: ${{ env.DB_PORT }}
-          FILE_PATH: ${{ env.FILE_PATH }}
-          LOG_FILE_PATH: ${{ env.LOG_FILE_PATH }}
+          DB_PORT: ${{ vars.DB_PORT }}
+          FILE_PATH: ${{ vars.FILE_PATH }}
+          LOG_FILE_PATH: ${{ vars.LOG_FILE_PATH }}
         run: mvn clean install
 
 
@@ -66,9 +66,9 @@ jobs:
       - name: Packer Build
         run: packer build 
               -var "source_path_jar=target/csye6225-0.0.1-SNAPSHOT.jar"  
-              -var "source_ami=${{env.debian_id}}" 
+              -var "source_ami=${{vars.debian_id}}" 
               -var "aws_region=${{secrets.aws_region}}" 
-              -var "subnet_id=${{env.subnet_id}}"
+              -var "subnet_id=${{vars.subnet_id}}"
               -var "ssh_username=${{secrets.ssh_username}}"
               -var "ami_users=${{secrets.ami_users}}"
               packer/.
