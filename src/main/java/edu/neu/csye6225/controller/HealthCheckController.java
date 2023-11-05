@@ -25,7 +25,7 @@ public class HealthCheckController {
     private final HealthCheckService healthCheckService;
 
     private final HttpServletRequest request;
-    private static final StatsDClient statsd = new NonBlockingStatsDClient("web-application-stat", "statsd-host", 8125);
+    private static final StatsDClient statsd = new NonBlockingStatsDClient("my.prefix", "statsd-host", 8125);
 
 
     @Autowired

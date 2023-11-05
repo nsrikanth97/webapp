@@ -27,7 +27,7 @@ import java.util.*;
 @Slf4j
 public class AssignmentController {
 
-    private static final StatsDClient statsd = new NonBlockingStatsDClient("web-application-stat", "statsd-host", 8125);
+    private static final StatsDClient statsd = new NonBlockingStatsDClient("my.prefix", "statsd-host", 8125);
 
 
     private final AssignmentService  assignmentService;
