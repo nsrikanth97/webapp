@@ -17,9 +17,10 @@ sudo mv /tmp/users.csv /opt/users.csv
 sudo mv /tmp/csye6225-0.0.1-SNAPSHOT.jar /opt/csye6225/csye6225-0.0.1-SNAPSHOT.jar
 
 sudo mv /tmp/web-application.service /etc/systemd/system/web-application.service
-
-sudo mv /tmp/cloudwatch-config.json /opt/csye6255/cloudwatch-config.json
+sudo mkdir -p /etc/cloudwatch
+sudo mv /tmp/cloudwatch-config.json /etc/cloudwatch/cloudwatch-config.json
 sudo -u csye6225 touch /opt/csye6225/application.properties
+sudo -u csye6225 touch /var/logs/application.log
 sudo chown csye6225:csye6225 /opt/csye6225/csye6225-0.0.1-SNAPSHOT.jar
 sudo chown csye6225:csye6225 /opt/csye6225/application.properties
 sudo chmod 750 /opt/csye6225/csye6225-0.0.1-SNAPSHOT.jar
@@ -27,5 +28,6 @@ sudo chmod 750 /opt/csye6225/application.properties
 sudo wget https://amazoncloudwatch-agent.s3.amazonaws.com/debian/amd64/latest/amazon-cloudwatch-agent.deb
 sudo dpkg -i amazon-cloudwatch-agent.deb
 sudo systemctl enable amazon-cloudwatch-agent
+sudo systemctl start amazon-cloudwatch-agent
 
 sudo systemctl enable web-application.service
