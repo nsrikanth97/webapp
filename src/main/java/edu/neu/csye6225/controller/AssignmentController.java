@@ -1,22 +1,19 @@
 package edu.neu.csye6225.controller;
 
 
-import com.timgroup.statsd.NonBlockingStatsDClient;
-import com.timgroup.statsd.StatsDClient;
 import edu.neu.csye6225.annotations.AuthenticateRequest;
 import edu.neu.csye6225.dto.Response;
 import edu.neu.csye6225.entity.Assignment;
 import edu.neu.csye6225.services.AssignmentService;
+import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
-import jakarta.validation.Valid;
 import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.util.StringUtils;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -27,7 +24,8 @@ import java.util.*;
 @Slf4j
 public class AssignmentController {
 
-    private static final StatsDClient statsd = new NonBlockingStatsDClient("my.prefix", "statsd-host", 8125);
+
+//    private static final StatsDClient statsd = new NonBlockingStatsDClient("my.prefix", "statsd-host", 8125);
 
 
     private final AssignmentService  assignmentService;
@@ -45,9 +43,9 @@ public class AssignmentController {
 
     @GetMapping
     @AuthenticateRequest
+
     public ResponseEntity<Object> getAllAssignments(@RequestBody(required = false) Object body){
         UUID loggedInUserId = (UUID) request.getSession().getAttribute("accountId");
-        statsd.incrementCounter("assignments.getall");
         log.info("AssignmentController:getAllAssignments:-Request received to get all assignments for user: {}", loggedInUserId);
         if(body != null || StringUtils.hasLength(request.getQueryString())) {
             log.error("AssignmentController:getAllAssignments:-Invalid request parameters or body present. Returning Bad Request status.");
@@ -70,7 +68,7 @@ public class AssignmentController {
     @GetMapping("/{id}")
     @AuthenticateRequest
     public ResponseEntity<Object> getAssignmentById(@PathVariable UUID id, @RequestBody(required = false) Object body){
-        statsd.incrementCounter("assignments.getById");
+//        statsd.incrementCounter("assignments.getById");
         log.info("AssignmentController:getAssignmentById:-Request received to fetch assignment by ID: {}", id);
         if(body != null || StringUtils.hasLength(request.getQueryString())) {
             log.error("AssignmentController:getAssignmentById:-Invalid request parameters or body present for assignment ID: {}. Returning Bad Request status.", id);
@@ -88,7 +86,7 @@ public class AssignmentController {
     @PostMapping
     @AuthenticateRequest
     public ResponseEntity<Object> createAssignment(@RequestBody(required = false) Assignment assignment){
-        statsd.incrementCounter("assignments.post");
+//        statsd.incrementCounter("assignments.post");
         UUID loggedInUserId = (UUID) request.getSession().getAttribute("accountId");
         log.info("AssignmentController:createAssignment:-Request received to create an assignment by the user: {}", loggedInUserId);
         if(StringUtils.hasLength(request.getQueryString()) || assignment == null) {
@@ -116,7 +114,7 @@ public class AssignmentController {
     @DeleteMapping("/{id}")
     @AuthenticateRequest
     public ResponseEntity<Object> deleteAssignment(@PathVariable UUID id, @RequestBody(required = false) Object body){
-        statsd.incrementCounter("assignments.delete");
+//        statsd.incrementCounter("assignments.delete");
         UUID loggedInUserId = (UUID) request.getSession().getAttribute("accountId");
         log.info("AssignmentController:deleteAssignment:-Request received to delete assignment by ID: {} for user: {}", id, loggedInUserId);
         if(body != null || StringUtils.hasLength(request.getQueryString())) {
@@ -130,7 +128,7 @@ public class AssignmentController {
     @AuthenticateRequest
     public ResponseEntity<Object> updateAssignment(@RequestBody(required = false) Assignment assignment,
                                                    @PathVariable UUID id){
-        statsd.incrementCounter("assignments.put");
+//        statsd.incrementCounter("assignments.put");
         UUID loggedInUserId = (UUID) request.getSession().getAttribute("accountId");
         log.info("AssignmentController:updateAssignment:-Request received to update assignment by ID: {} for user: {}", id, loggedInUserId);
         if(StringUtils.hasLength(request.getQueryString()) || assignment == null) {

@@ -1,8 +1,6 @@
 package edu.neu.csye6225.controller;
 
 
-import com.timgroup.statsd.NonBlockingStatsDClient;
-import com.timgroup.statsd.StatsDClient;
 import edu.neu.csye6225.annotations.AuthenticateRequest;
 import edu.neu.csye6225.services.HealthCheckService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -25,8 +23,6 @@ public class HealthCheckController {
     private final HealthCheckService healthCheckService;
 
     private final HttpServletRequest request;
-    private static final StatsDClient statsd = new NonBlockingStatsDClient("my.prefix", "statsd-host", 8125);
-
 
     @Autowired
     public HealthCheckController(HealthCheckService healthCheckService, HttpServletRequest request){
@@ -37,7 +33,7 @@ public class HealthCheckController {
 
     @GetMapping
     public ResponseEntity<Void> healthCheck(@RequestBody(required = false) Object body) {
-        statsd.incrementCounter("healthz.get");
+//        statsd.incrementCounter("healthz.get");
         HttpStatus status;
         HttpHeaders headers = new HttpHeaders();
         log.info("HealthCheckController:healthCheck:-Request received to check health of the system.");
