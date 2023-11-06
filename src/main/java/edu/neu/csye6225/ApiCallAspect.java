@@ -15,10 +15,10 @@ import org.springframework.stereotype.Component;
 @Configuration
 public class ApiCallAspect {
 
-    @Bean
-    public StatsDClient statsDCClient(){
-        return new NonBlockingStatsDClient("web-application", "statsd-host", 8125);
-    }
+//    @Bean
+//    public StatsDClient statsDCClient(){
+//        return new NonBlockingStatsDClient("web-application", "statsd-host", 8125);
+//    }
 
 //    private final MeterRegistry meterRegistry;
 //

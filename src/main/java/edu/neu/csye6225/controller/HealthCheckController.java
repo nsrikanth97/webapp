@@ -26,20 +26,20 @@ public class HealthCheckController {
 
     private final HttpServletRequest request;
 
-    private final StatsDClient statsDClient;
+//    private final StatsDClient statsDClient;
 
 
     @Autowired
-    public HealthCheckController(HealthCheckService healthCheckService, HttpServletRequest request, StatsDClient statsDClient){
+    public HealthCheckController(HealthCheckService healthCheckService, HttpServletRequest request){
         this.healthCheckService = healthCheckService;
         this.request = request;
-        this.statsDClient = statsDClient;
+//        this.statsDClient = statsDClient;
     }
 
 
     @GetMapping
     public ResponseEntity<Void> healthCheck(@RequestBody(required = false) Object body) {
-        statsDClient.incrementCounter("healthz.get");
+//        statsDClient.incrementCounter("healthz.get");
         HttpStatus status;
         HttpHeaders headers = new HttpHeaders();
         log.info("HealthCheckController:healthCheck:-Request received to check health of the system.");

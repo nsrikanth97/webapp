@@ -49,9 +49,10 @@ public class AssignmentController {
     @AuthenticateRequest
 
     public ResponseEntity<Object> getAllAssignments(@RequestBody(required = false) Object body){
-        Counter.builder("api.calls.getAssignments")
-                .register(meterRegistry)
-                .increment();
+        Counter counter = Counter.builder("api.calls.getAssignments")
+                .register(meterRegistry);
+        counter.increment();
+        log.info("AssignmentController:getAllAssignments:-Counter incremented to {}", counter.count());
         UUID loggedInUserId = (UUID) request.getSession().getAttribute("accountId");
         log.info("AssignmentController:getAllAssignments:-Request received to get all assignments for user: {}", loggedInUserId);
         if(body != null || StringUtils.hasLength(request.getQueryString())) {
