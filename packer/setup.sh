@@ -20,8 +20,8 @@ sudo mv /tmp/web-application.service /etc/systemd/system/web-application.service
 sudo mkdir -p /etc/cloudwatch
 sudo mv /tmp/cloudwatch-config.json /etc/cloudwatch/cloudwatch-config.json
 sudo -u csye6225 touch /opt/csye6225/application.properties
-sudo  touch /var/logs/application.log
-sudo chown csye6225:csye6225 /var/logs/application.log
+sudo  touch /var/log/application.log
+sudo chown csye6225:csye6225 /var/log/application.log
 sudo chown csye6225:csye6225 /opt/csye6225/csye6225-0.0.1-SNAPSHOT.jar
 sudo chown csye6225:csye6225 /opt/csye6225/application.properties
 sudo chmod 750 /opt/csye6225/csye6225-0.0.1-SNAPSHOT.jar

@@ -62,6 +62,7 @@ public class HealthCheckController {
                 .description("Number of API calls")
                 .register(meterRegistry);
         log.info("Srikanth  " + counter.count());
+        counter.increment();
         return ResponseEntity.status(status)
                 .headers(headers).build();
     }
