@@ -5,6 +5,7 @@ import edu.neu.csye6225.annotations.AuthenticateRequest;
 import edu.neu.csye6225.dto.Response;
 import edu.neu.csye6225.entity.Assignment;
 import edu.neu.csye6225.services.AssignmentService;
+import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.ConstraintViolation;
@@ -33,18 +34,24 @@ public class AssignmentController {
     private final HttpServletRequest request;
 
     private final Validator validator;
+    private final MeterRegistry meterRegistry;
+
 
     @Autowired
-    public AssignmentController(AssignmentService assignmentService, HttpServletRequest request, Validator validator){
+    public AssignmentController(AssignmentService assignmentService, HttpServletRequest request, Validator validator, MeterRegistry meterRegistry){
         this.assignmentService = assignmentService;
         this.request = request;
         this.validator =validator;
+        this.meterRegistry = meterRegistry;
     }
 
     @GetMapping
     @AuthenticateRequest
 
     public ResponseEntity<Object> getAllAssignments(@RequestBody(required = false) Object body){
+        Counter.builder("api.calls.getAssignments")
+                .register(meterRegistry)
+                .increment();
         UUID loggedInUserId = (UUID) request.getSession().getAttribute("accountId");
         log.info("AssignmentController:getAllAssignments:-Request received to get all assignments for user: {}", loggedInUserId);
         if(body != null || StringUtils.hasLength(request.getQueryString())) {
