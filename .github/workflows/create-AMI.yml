@@ -47,6 +47,8 @@ jobs:
           DB_PORT: ${{ vars.DB_PORT }}
           FILE_PATH: ${{ vars.FILE_PATH }}
           LOG_FILE_PATH: ${{ vars.LOG_FILE_PATH }}
+          YOUR_DOMAIN_NAME: ${{ secrets.YOUR_DOMAIN_NAME }}
+          API_KEY : ${{ secrets.API_KEY }}
         run: mvn clean install
 
 
