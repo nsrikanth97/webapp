@@ -26,20 +26,21 @@ public class HealthCheckController {
 
     private final HttpServletRequest request;
 
-//    private final StatsDClient statsDClient;
+    private MeterRegistry meterRegistry;
 
+    private Counter healthCheckCounter;
 
     @Autowired
-    public HealthCheckController(HealthCheckService healthCheckService, HttpServletRequest request){
+    public HealthCheckController(HealthCheckService healthCheckService, HttpServletRequest request, MeterRegistry meterRegistry){
         this.healthCheckService = healthCheckService;
         this.request = request;
-//        this.statsDClient = statsDClient;
+        this.meterRegistry = meterRegistry;
+        healthCheckCounter = meterRegistry.counter("healthz.get");
     }
 
 
     @GetMapping
     public ResponseEntity<Void> healthCheck(@RequestBody(required = false) Object body) {
-//        statsDClient.incrementCounter("healthz.get");
         HttpStatus status;
         HttpHeaders headers = new HttpHeaders();
         log.info("HealthCheckController:healthCheck:-Request received to check health of the system.");
@@ -59,11 +60,7 @@ public class HealthCheckController {
             log.error("HealthCheckController:healthCheck:-Database is not connected. Returning Service Unavailable status.");
             status = HttpStatus.SERVICE_UNAVAILABLE;
         }
-//        Counter counter = Counter.builder("api.calls")
-//                .description("Number of API calls")
-//                .register(meterRegistry);
-//        log.info("Srikanth  " + counter.count());
-//        counter.increment();
+        healthCheckCounter.increment();
         return ResponseEntity.status(status)
                 .headers(headers).build();
     }
