@@ -40,11 +40,11 @@ public class AccountService {
 
     @PostConstruct
     private void initializeTheUsers()  {
+        log.info("Initializing the user accounts in the application");
         String line;
         String[] data;
         Account temp;
         Account newAccount;
-        log.debug("Initializing user accounts in the application");
         BufferedReader fileReader;
         try{
             log.debug("Reading data from the file");
@@ -56,6 +56,7 @@ public class AccountService {
                 log.error("Invalid data provided, data must contain 4 fields first_name, last_name,email and password");
                 throw new RuntimeException("Corrupt data provide, please check the data and make sure it has exactly four fields first_name, last_name and password");
             }
+            log.info("Data validation completed, proceeding with account creation");
             while ((line = fileReader.readLine()) != null){
                 temp = null;
                 data = line.split(",");
@@ -94,9 +95,9 @@ public class AccountService {
                     newAccount.setAccountUpdated(new Timestamp(System.currentTimeMillis()));
                     newAccount = accountRepository.save(newAccount);
                     if(newAccount.getId()!= null){
-                        log.info("User account created successfully for user with email: " + newAccount.getEmail());
+                        log.info("User account created successfully for user with email: {}" , newAccount.getEmail());
                     }else{
-                        log.warn("Failed creating account for the user with email : " + newAccount.getEmail());
+                        log.warn("Failed creating account for the user with email : {}" , newAccount.getEmail());
                     }
                 }else{
                     log.info("Account already exists for the user with email : " + data[2]);

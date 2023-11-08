@@ -17,6 +17,7 @@ public class Csye6225Application {
 	private DispatcherServlet servlet;
 
 	public static void main(String[] args) {
+
 		SpringApplication.run(Csye6225Application.class, args);
 	}
 
