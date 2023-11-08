@@ -33,8 +33,8 @@ jobs:
       - name: Set up MariaDB
         uses: getong/mariadb-action@v1.1
         with:
-          host port: ${{secrets.DB_PORT}}
-          mysql database: ${{ secrets.DB_NAME}}
+          host port: ${{vars.DB_PORT}}
+          mysql database: ${{ vars.DB_NAME}}
           mysql root password:  ${{ secrets.DB_PASS }}
       
 
@@ -42,10 +42,13 @@ jobs:
         env:
           DB_HOST: ${{ secrets.DB_HOST }}
           DB_USER: ${{ secrets.DB_USER }}
-          DB_NAME: ${{ secrets.DB_NAME }}
+          DB_NAME: ${{ vars.DB_NAME }}
           DB_PASS : ${{ secrets.DB_PASS }}
-          DB_PORT : ${{ secrets.DB_PORT }}
-          FILE_PATH :  ${{ secrets.FILE_PATH }}
+          DB_PORT : ${{ vars.DB_PORT }}
+          FILE_PATH :  ${{ vars.FILE_PATH }}
+          LOG_FILE_PATH : ${{ vars.LOG_FILE_PATH }}
+          YOUR_DOMAIN_NAME: ${{ secrets.YOUR_DOMAIN_NAME }}
+          API_KEY: ${{ secrets.API_KEY }}
         run : mvn clean verify
 
 

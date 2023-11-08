@@ -1,6 +1,7 @@
 package edu.neu.csye6225.exception_handler;
 
 import edu.neu.csye6225.dto.Response;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.support.DefaultMessageSourceResolvable;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatusCode;
@@ -20,6 +21,7 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @ControllerAdvice
+@Slf4j
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
 
@@ -30,6 +32,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         headers.set("Cache-Control", "no-cache, no-store, must-revalidate");
         headers.set("Pragma", "no-cache");
         headers.set("X-Content-Type-Options", "nosniff");
+        log.error("GlobalExceptionHandler:handleHttpRequestMethodNotSupported:-Request received with invalid method type. Returning Method Not Allowed status.");
         return ResponseEntity.status(405).headers(headers).build();
     }
 
@@ -37,9 +40,8 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException e,
                                                               HttpHeaders headers, HttpStatusCode status,
                                                                 WebRequest request) {
-        headers.set("Cache-Control", "no-cache, no-store, must-revalidate");
-        headers.set("Pragma", "no-cache");
-        headers.set("X-Content-Type-Options", "nosniff");
+
+        log.error("GlobalExceptionHandler:handleNoHandlerFoundException:-Request received with invalid URL. Returning Not Found status.");
         return ResponseEntity.status(404).headers(headers).build();
     }
 
@@ -54,7 +56,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         Response<Map<String,String>> response = new Response<>();
         response.setStatus(Response.ReturnStatus.FAILURE);
         response.setData(hashMap);
-
+        log.error("GlobalExceptionHandler:handleMethodArgumentNotValid:-Request received with invalid arguments. Returning Bad Request status.");
         return ResponseEntity.badRequest().headers(headers).body(response);
     }
 
