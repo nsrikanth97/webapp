@@ -1,10 +1,8 @@
 package edu.neu.csye6225.controller;
 
 
-import com.timgroup.statsd.StatsDClient;
 import edu.neu.csye6225.services.HealthCheckService;
-import io.micrometer.core.instrument.Counter;
-import io.micrometer.core.instrument.MeterRegistry;
+
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,16 +24,12 @@ public class HealthCheckController {
 
     private final HttpServletRequest request;
 
-    private MeterRegistry meterRegistry;
 
-    private Counter healthCheckCounter;
 
     @Autowired
-    public HealthCheckController(HealthCheckService healthCheckService, HttpServletRequest request, MeterRegistry meterRegistry){
+    public HealthCheckController(HealthCheckService healthCheckService, HttpServletRequest request){
         this.healthCheckService = healthCheckService;
         this.request = request;
-        this.meterRegistry = meterRegistry;
-        healthCheckCounter = meterRegistry.counter("healthz.get");
     }
 
 
@@ -60,7 +54,6 @@ public class HealthCheckController {
             log.error("HealthCheckController:healthCheck:-Database is not connected. Returning Service Unavailable status.");
             status = HttpStatus.SERVICE_UNAVAILABLE;
         }
-        healthCheckCounter.increment();
         return ResponseEntity.status(status)
                 .headers(headers).build();
     }

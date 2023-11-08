@@ -40,9 +40,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     public ResponseEntity<Object> handleNoHandlerFoundException(NoHandlerFoundException e,
                                                               HttpHeaders headers, HttpStatusCode status,
                                                                 WebRequest request) {
-        headers.set("Cache-Control", "no-cache, no-store, must-revalidate");
-        headers.set("Pragma", "no-cache");
-        headers.set("X-Content-Type-Options", "nosniff");
+
         log.error("GlobalExceptionHandler:handleNoHandlerFoundException:-Request received with invalid URL. Returning Not Found status.");
         return ResponseEntity.status(404).headers(headers).build();
     }
