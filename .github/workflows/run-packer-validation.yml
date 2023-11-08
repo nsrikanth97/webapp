@@ -2,7 +2,7 @@ name: Run packer format and validation
 
 
 on:
-  pull_request:
+  push:
     branches:
       - main
 
