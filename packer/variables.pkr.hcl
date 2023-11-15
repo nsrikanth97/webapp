@@ -33,7 +33,7 @@ variable "source_path_jar" {
 
 variable "ami_users" {
   type    = list(string)
-  default = ["362731286542", "921922858617"]
+  default = ["362731286542", "921922858617", "017960186760"]
 }
 
 variable "instance_type" {

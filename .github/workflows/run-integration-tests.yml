@@ -49,6 +49,8 @@ jobs:
           LOG_FILE_PATH : ${{ vars.LOG_FILE_PATH }}
           YOUR_DOMAIN_NAME: ${{ secrets.YOUR_DOMAIN_NAME }}
           API_KEY: ${{ secrets.API_KEY }}
+          SG_API_KEY: ${{secrets.SG_API_KEY}}
+          TEMPLATE_ID: ${{vars.TEMPLATE_ID}}
         run : mvn clean verify
 
 

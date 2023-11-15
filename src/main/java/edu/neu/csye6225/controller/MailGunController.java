@@ -1,7 +1,7 @@
 package edu.neu.csye6225.controller;
 
 
-import edu.neu.csye6225.dto.MailGunDetails;
+import edu.neu.csye6225.dto.MailDetails;
 import kong.unirest.HttpResponse;
 import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
@@ -23,7 +23,7 @@ public class MailGunController {
     String API_KEY;
 
     @PostMapping("/mail")
-    public JsonNode sendSimpleMessage(MailGunDetails mailGunDetails) throws UnirestException {
+    public JsonNode sendSimpleMessage(MailDetails mailGunDetails) throws UnirestException {
         HttpResponse<JsonNode> request = Unirest.post("https://api.mailgun.net/v3/" + YOUR_DOMAIN_NAME + "/messages")
 			.basicAuth("api", API_KEY)
                 .queryString("from", mailGunDetails.getFrom())
