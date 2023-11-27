@@ -1,5 +1,7 @@
 package edu.neu.csye6225.services;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.neu.csye6225.dto.Response;
 import edu.neu.csye6225.dto.SnsTopicData;
 import edu.neu.csye6225.entity.Assignment;
@@ -63,7 +65,7 @@ public class SubmissionService {
             log.error("SubmissionService:createSubmission:-Invalid request received to create a new submission. Assignment with id: {} does not exist", assignmentId);
             response.setStatus(Response.ReturnStatus.FAILURE);
             response.getErrorMessages().add("Invalid request received to create a new submission. Assignment with id: " + assignmentId + " does not exist");
-            return ResponseEntity.badRequest().body(response);
+            return ResponseEntity.status(404).body(response);
         }
 //        UUID accountId =assignment.getAccount().getId();
 //        UUID loggedId = (UUID) request.getSession().getAttribute("accountId");
@@ -73,6 +75,8 @@ public class SubmissionService {
 //            response.getErrorMessages().add("Invalid request received to create a new submission. Assignment with id: " + assignmentId + " does not belong to the user with id: " + loggedId);
 //            return ResponseEntity.status(403).body(response);
 //        }
+        String email = (String) request.getSession().getAttribute("email");
+        String firstName = (String) request.getSession().getAttribute("firstName");
         int submissionCount = submissionRepository.countByAssignment_Id(assignmentId);
         if(submissionCount >= assignment.getNumOfAttempts()) {
             log.error("SubmissionService:createSubmission:-Invalid request received to create a new submission. Maximum number of attempts reached for assignment with id: {}", assignmentId);
@@ -106,8 +110,16 @@ public class SubmissionService {
         snsTopicData.setAssignmentId(assignmentId.toString());
         snsTopicData.setSubmissionId(savedSubmission.getId().toString());
         snsTopicData.setSubmissionUrl(savedSubmission.getSubmissionUrl());
-        snsTopicData.setEmailId(assignment.getAccount().getEmail());
-        String message = snsTopicData.toString();
+        snsTopicData.setEmailId(email);
+        snsTopicData.setFirstName(firstName);
+        snsTopicData.setAssignmentName(assignment.getName());
+        ObjectMapper objectMapper = new ObjectMapper();
+        String message = "";
+        try {
+            message = objectMapper.writeValueAsString(snsTopicData);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException(e);
+        }
         PublishRequest publishRequest = PublishRequest.builder()
                 .topicArn(topicArn)
                 .message(message)
@@ -121,8 +133,6 @@ public class SubmissionService {
             response.setStatus(Response.ReturnStatus.FAILURE);
             response.getErrorMessages().add("Failed to publish message to SNS topic");
             return ResponseEntity.status(500).body(response);
-        }finally {
-            snsClient.close();
         }
         log.info("SubmissionService:createSubmission:-Submission created successfully with id: {}", savedSubmission.getId());
         return ResponseEntity.status(201).body(savedSubmission);

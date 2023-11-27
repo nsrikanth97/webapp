@@ -4,7 +4,9 @@ package edu.neu.csye6225.controller;
 import edu.neu.csye6225.annotations.AuthenticateRequest;
 import edu.neu.csye6225.dto.Response;
 import edu.neu.csye6225.entity.Assignment;
+import edu.neu.csye6225.entity.Submission;
 import edu.neu.csye6225.services.AssignmentService;
+import edu.neu.csye6225.services.SubmissionService;
 import io.micrometer.core.instrument.Counter;
 import io.micrometer.core.instrument.MeterRegistry;
 import jakarta.servlet.http.HttpServletRequest;
@@ -35,12 +37,15 @@ public class AssignmentController {
 
     private final Validator validator;
 
+    private final SubmissionService submissionService;
+
 
     @Autowired
-    public AssignmentController(AssignmentService assignmentService, HttpServletRequest request, Validator validator){
+    public AssignmentController(AssignmentService assignmentService, HttpServletRequest request, Validator validator, SubmissionService submissionService){
         this.assignmentService = assignmentService;
         this.request = request;
         this.validator =validator;
+        this.submissionService = submissionService;
     }
 
     @GetMapping
@@ -148,6 +153,18 @@ public class AssignmentController {
         }
         log.debug("AssignmentController:updateAssignment:-Request body is valid. Proceeding with the update.");
         return assignmentService.updateAssignment(id,assignment);
+    }
+
+    @PostMapping("/{id}/submission")
+    @AuthenticateRequest
+    public ResponseEntity<Object> createSubmission(@PathVariable UUID id, @RequestBody(required = false) Submission body){
+        UUID loggedInUserId = (UUID) request.getSession().getAttribute("accountId");
+        log.info("AssignmentController:createSubmission:-Request received to create a submission for assignment ID: {} for user: {}", id, loggedInUserId);
+        if(body == null || StringUtils.hasLength(request.getQueryString())) {
+            log.error("AssignmentController:createSubmission:-Invalid request parameters or body present for assignment ID: {}. Returning Bad Request status.", id);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
+        return submissionService.createSubmission(id, body);
     }
 
 }

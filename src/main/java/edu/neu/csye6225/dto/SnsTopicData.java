@@ -14,4 +14,8 @@ public class SnsTopicData {
 
     private String submissionDate;
     private String emailId;
+
+    private String firstName;
+
+    private String assignmentName;
 }
