@@ -77,7 +77,7 @@ public class SubmissionService {
 //        }
         String email = (String) request.getSession().getAttribute("email");
         String firstName = (String) request.getSession().getAttribute("firstName");
-        int submissionCount = submissionRepository.countByAssignment_Id(assignmentId);
+        long submissionCount = submissionRepository.countByAssignment_Id(assignmentId);
         if(submissionCount >= assignment.getNumOfAttempts()) {
             log.error("SubmissionService:createSubmission:-Invalid request received to create a new submission. Maximum number of attempts reached for assignment with id: {}", assignmentId);
             response.setStatus(Response.ReturnStatus.FAILURE);
