@@ -31,23 +31,23 @@ public class AppConfig  {
 
     @Bean
     public CloudWatchAsyncClient cloudWatchAsyncClient() {
-        AwsCredentialsProvider credentialsProvider = ProfileCredentialsProvider.builder()
-                .profileName("root")
-                .build();
+//        AwsCredentialsProvider credentialsProvider = ProfileCredentialsProvider.builder()
+//                .profileName("root")
+//                .build();
         return CloudWatchAsyncClient.builder()
                 .region(Region.of(region))
-                .credentialsProvider(credentialsProvider)
+//                .credentialsProvider(credentialsProvider)
                 .build();
     }
 
     @Bean
     public SnsClient snsClient() {
-        AwsCredentialsProvider credentialsProvider = ProfileCredentialsProvider.builder()
-                .profileName("root")
-                .build();
+//        AwsCredentialsProvider credentialsProvider = ProfileCredentialsProvider.builder()
+//                .profileName("root")
+//                .build();
         return SnsClient.builder()
                 .region(Region.of(region))
-                .credentialsProvider(credentialsProvider)
+//                .credentialsProvider(credentialsProvider)
                 .build();
     }
 
