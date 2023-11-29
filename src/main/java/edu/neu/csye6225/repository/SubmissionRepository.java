@@ -10,5 +10,5 @@ import java.util.UUID;
 public interface SubmissionRepository extends JpaRepository<Submission, UUID> {
 
 
-    long countByAssignment_Id(UUID assignmentId);
+    long  countByAssignment_IdAndAndUserId(UUID assignmentId, UUID userId);
 }

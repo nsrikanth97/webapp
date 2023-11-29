@@ -62,4 +62,8 @@ public class Submission {
     public LocalDateTime getSubmissionUpdated() {
         return submissionUpdated;
     }
+
+    @Column
+    private UUID userId;
+
 }

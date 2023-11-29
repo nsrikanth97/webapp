@@ -81,6 +81,7 @@ public class Assignment {
     }
 
     @OneToMany(mappedBy = "assignment", cascade = CascadeType.ALL)
+    @JsonIgnore
     private List<Submission> submissions;
 
 }
