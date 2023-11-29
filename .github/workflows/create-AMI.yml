@@ -51,6 +51,8 @@ jobs:
           API_KEY : ${{ secrets.API_KEY }}
           SG_API_KEY : ${{secrets.SG_API_KEY}}
           TEMPLATE_ID: ${{vars.TEMPLATE_ID}}
+          TOPIC_ARN: ${{vars.TOPIC_ARN}}
+          REGION: ${{vars.AWS_REGION}}
         run: mvn clean install
 
 

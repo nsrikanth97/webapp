@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -119,6 +120,14 @@ public class AssignmentService {
                 assignmentResponse.setData("FORBIDDEN : Only user who created the assignment can delete the assignment");
                 response = ResponseEntity.status(HttpStatus.FORBIDDEN).body(assignmentResponse);
             }else{
+                if(!CollectionUtils.isEmpty(assignment.get().getSubmissions())){
+                    log.error("AssignmentService:deleteAssignment:-Assignment with ID: {} cannot be deleted as it has " +
+                            "submissions", id);
+                    assignmentResponse.setStatus(Response.ReturnStatus.FAILURE);
+                    assignmentResponse.getErrorMessages().add("Assignment with ID: " + id + " cannot be deleted as it has submissions");
+                    response = ResponseEntity.status(HttpStatus.BAD_REQUEST).body(assignmentResponse);
+                    return response;
+                }
                 log.info("AssignmentService:deleteAssignment:-Deleting assignment with ID: {}", id);
                 assignmentRepository.delete(assignment.get());
                 log.info("AssignmentService:deleteAssignment:-Assignment with ID: {} deleted successfully", id);
@@ -173,5 +182,8 @@ public class AssignmentService {
             }
         }
         return response;
+    }
+    public Assignment getAssignment(UUID uuid){
+        return assignmentRepository.getAssignmentById(uuid);
     }
 }

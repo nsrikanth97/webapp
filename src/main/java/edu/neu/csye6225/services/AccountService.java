@@ -128,6 +128,8 @@ public class AccountService {
             log.info("Email and password match for provided details, authentication successful");
             HttpSession session = request.getSession();
             session.setAttribute("accountId", account.getId());
+            session.setAttribute("email", account.getEmail());
+            session.setAttribute("firstName", account.getFirstName());
             return true;
         }else {
             log.info("Invalid credentials provided, authentication failed");

@@ -5,10 +5,7 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
-import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.NotEmpty;
-import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.*;
 import lombok.Data;
 import org.hibernate.annotations.GenericGenerator;
 
@@ -16,6 +13,8 @@ import org.hibernate.annotations.GenericGenerator;
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -35,7 +34,7 @@ public class Assignment {
     @NotNull(message = "Values of points cannot be empty or null")
     @Min(value = 1, message = "Minimum value for the assignment points is 1")
     @Max(value = 100,message = "Maximum value for the points is 100, please provide number less than 100")
-    private Double points;
+    private int points;
 
     @Column(nullable = false)
     @JsonProperty("num_of_attemps")
@@ -53,12 +52,14 @@ public class Assignment {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     @Temporal(TemporalType.TIMESTAMP)
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    @JsonIgnore
     private LocalDateTime assignmentCreated;
 
     @Column
     @JsonProperty(access = JsonProperty.Access.READ_ONLY, namespace = "assignment_created")
     @Temporal(TemporalType.TIMESTAMP)
     @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    @JsonIgnore
     private LocalDateTime assignmentUpdated;
 
     @ManyToOne
@@ -66,5 +67,21 @@ public class Assignment {
     @JsonIgnore
     private Account account;
 
+
+    @JsonProperty("assignment_updated")
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    public LocalDateTime getAssignmentUpdatedForJson() {
+        return assignmentUpdated;
+    }
+
+    @JsonProperty("assignment_created")
+    @JsonFormat(pattern="yyyy-MM-dd'T'HH:mm:ss.SSS'Z'")
+    public LocalDateTime getAssignmentCreatedForJson() {
+        return assignmentCreated;
+    }
+
+    @OneToMany(mappedBy = "assignment", cascade = CascadeType.ALL)
+    @JsonIgnore
+    private List<Submission> submissions;
 
 }
