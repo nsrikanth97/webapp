@@ -2,7 +2,7 @@ name: Create AMI
 
 
 on:
-  push:
+  pull_request:
     branches:
       - main
 
@@ -77,6 +77,18 @@ jobs:
               -var "subnet_id=${{vars.subnet_id}}"
               -var "ssh_username=${{vars.ssh_username}}"
               packer/.
+
+      - name: Update the launch template and initiate the instance refresh for autoscaling group
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ROOT_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_ROOT_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+        run: |
+          image_id=$(aws ec2 describe-images --owners "921922858617" --filters "Name=name,Values=csye6225_2023_*" --query 'sort_by(Images, &CreationDate)[0].ImageId')
+          echo "Image ID: $image_id"
+          aws ec2 create-launch-template-version --launch-template-id ${{vars.launch_template_id}} --source-version ${{vars.launch_template_version}} --launch-template-data "{\"ImageId\":\"$image_id\"}"
+          aws autoscaling start-instance-refresh --auto-scaling-group-name ${{vars.auto_scaling_group_name}} --preferences "{\"InstanceWarmup\":180,\"MinHealthyPercentage\":100}" --strategy Rolling
 
 
 
