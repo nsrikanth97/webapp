@@ -20,7 +20,7 @@ jobs:
 
       - name: Update the launch template and initiate the instance refresh for autoscaling group
         run: |
-          image_id=$(aws ec2 describe-images --owners "921922858617" --filters "Name=name,Values=csye6225_2023_*" --query 'sort_by(Images, &[CreationDate, ImageId])[0].ImageId')
+          image_id=$(aws ec2 describe-images --owners "921922858617" --filters "Name=name,Values=csye6225_2023_*" --query 'sort_by(Images, &CreationDate)[-1].ImageId')
           echo "Image ID: $image_id"
           launch_template_response=$(aws ec2 create-launch-template-version --launch-template-id ${{vars.LAUNCH_TEMPLATE_ID}} --source-version ${{vars.LAUNCH_TEMPLATE_VERSION}} --launch-template-data "{\"ImageId\":$image_id}")
           version_number=$(echo $launch_template_response | jq -r '.LaunchTemplateVersion.VersionNumber')
