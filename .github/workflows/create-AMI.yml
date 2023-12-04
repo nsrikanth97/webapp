@@ -95,6 +95,19 @@ jobs:
           aws ec2 modify-launch-template --launch-template-id ${{vars.LAUNCH_TEMPLATE_ID}} --default-version $version_number --region ${{secrets.AWS_REGION}}     
           aws autoscaling start-instance-refresh --auto-scaling-group-name ${{vars.AUTO_SCALING_GROUP_NAME}} --preferences "{\"InstanceWarmup\":180,\"MinHealthyPercentage\":100}" --strategy Rolling
 
+      - name: Wait for instance refresh to complete
+        run: |
+          instance_refresh_status=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name ${{vars.AUTO_SCALING_GROUP_NAME}} --region ${{secrets.AWS_REGION}} --query 'sort_by(InstanceRefreshes, &StartTime)[].Status' --output text)
+          while [ "$instance_refresh_status" != "Successful" ]
+          do
+            echo "Instance refresh status: $instance_refresh_status"
+            sleep 10
+            instance_refresh_status=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name ${{vars.AUTO_SCALING_GROUP_NAME}} --region ${{secrets.AWS_REGION}} --query 'sort_by(InstanceRefreshes, &StartTime)[].Status' --output text)
+          done
+          echo "Instance refresh status: $instance_refresh_status"
+          echo "Instance refresh completed successfully"
+          
+
 
 
 
