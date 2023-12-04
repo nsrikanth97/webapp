@@ -27,6 +27,7 @@ jobs:
           echo "Launch Template Version: $version_number"
           aws ec2 modify-launch-template --launch-template-id ${{vars.LAUNCH_TEMPLATE_ID}} --default-version $version_number --region ${{secrets.AWS_REGION}}     
           aws autoscaling start-instance-refresh --auto-scaling-group-name ${{vars.AUTO_SCALING_GROUP_NAME}} --preferences "{\"InstanceWarmup\":180,\"MinHealthyPercentage\":100}" --strategy Rolling
+          sleep 20
 
       - name: Wait for instance refresh to complete
         run: |
