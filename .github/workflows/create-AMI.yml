@@ -11,6 +11,23 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+      - name: Change the credentials to root
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ROOT_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_ROOT_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Update the launch template and initiate the instance refresh for autoscaling group
+        run: |
+          image_id=$(aws ec2 describe-images --owners "921922858617" --filters "Name=name,Values=csye6225_2023_*" --query 'sort_by(Images, &CreationDate)[0].ImageId')
+          echo "Image ID: $image_id"
+          launch_template_response=$(aws ec2 create-launch-template-version --launch-template-id ${{vars.LAUNCH_TEMPLATE_ID}} --source-version ${{vars.LAUNCH_TEMPLATE_VERSION}} --launch-template-data "{\"ImageId\":$image_id}")
+          version_number=$(echo $launch_template_response | jq -r '.LaunchTemplateVersion.VersionNumber')
+          echo "Launch Template Version: $version_number"
+          aws ec2 modify-launch-template --launch-template-id ${{vars.LAUNCH_TEMPLATE_ID}} --default-version $launch_template --region ${{secrets.AWS_REGION}}      
+          aws autoscaling start-instance-refresh --auto-scaling-group-name ${{vars.AUTO_SCALING_GROUP_NAME}} --preferences "{\"InstanceWarmup\":180,\"MinHealthyPercentage\":100}" --strategy Rolling
+
       - name : Checkout code
         uses: actions/checkout@v4
 
@@ -78,21 +95,6 @@ jobs:
               -var "ssh_username=${{vars.ssh_username}}"
               packer/.
 
-      - name: Change the credentials to root
-        uses: aws-actions/configure-aws-credentials@v4
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ROOT_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_ROOT_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
-
-      - name: Update the launch template and initiate the instance refresh for autoscaling group
-        run: |
-          image_id=$(aws ec2 describe-images --owners "921922858617" --filters "Name=name,Values=csye6225_2023_*" --query 'sort_by(Images, &CreationDate)[0].ImageId')
-          echo "Image ID: $image_id"
-          launch_template=$(aws ec2 create-launch-template-version --launch-template-id ${{vars.LAUNCH_TEMPLATE_ID}} --source-version ${{vars.LAUNCH_TEMPLATE_VERSION}} --launch-template-data "{\"ImageId\":$image_id}").LaunchTemplateVersion.VersionNumber
-          echo "Launch Template Version: $launch_template"
-          aws ec2 modify-launch-template --launch-template-id ${{vars.LAUNCH_TEMPLATE_ID}} --default-version $launch_template --region ${{secrets.AWS_REGION}}      
-          aws autoscaling start-instance-refresh --auto-scaling-group-name ${{vars.AUTO_SCALING_GROUP_NAME}} --preferences "{\"InstanceWarmup\":180,\"MinHealthyPercentage\":100}" --strategy Rolling
 
 
 
