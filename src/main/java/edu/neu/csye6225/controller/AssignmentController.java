@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@RequestMapping("v2/assignments")
+@RequestMapping("v1/assignments")
 @Slf4j
 public class AssignmentController {
 
