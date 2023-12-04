@@ -78,5 +78,46 @@ jobs:
               -var "ssh_username=${{vars.ssh_username}}"
               packer/.
 
+      - name: Change the credentials to root
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ROOT_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_ROOT_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_REGION }}
+
+      - name: Update the launch template and initiate the instance refresh for autoscaling group
+        run: |
+          image_id=$(aws ec2 describe-images --owners "921922858617" --filters "Name=name,Values=csye6225_2023_*" --query 'sort_by(Images, &CreationDate)[-1].ImageId')
+          echo "Image ID: $image_id"
+          launch_template_response=$(aws ec2 create-launch-template-version --launch-template-id ${{vars.LAUNCH_TEMPLATE_ID}} --source-version ${{vars.LAUNCH_TEMPLATE_VERSION}} --launch-template-data "{\"ImageId\":$image_id}")
+          version_number=$(echo $launch_template_response | jq -r '.LaunchTemplateVersion.VersionNumber')
+          echo "Launch Template Version: $version_number"
+          aws ec2 modify-launch-template --launch-template-id ${{vars.LAUNCH_TEMPLATE_ID}} --default-version $version_number --region ${{secrets.AWS_REGION}}     
+          aws autoscaling start-instance-refresh --auto-scaling-group-name ${{vars.AUTO_SCALING_GROUP_NAME}} --preferences "{\"InstanceWarmup\":180,\"MinHealthyPercentage\":100}" --strategy Rolling
+          sleep 20
+
+      - name: Wait for instance refresh to complete
+        run: |
+          instance_refresh_status=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name ${{vars.AUTO_SCALING_GROUP_NAME}} --region ${{secrets.AWS_REGION}} --query 'InstanceRefreshes[?StartTime!=`null`] | sort_by(@, &StartTime)[-1].Status' --output text)
+          while [ "$instance_refresh_status" != "Successful" ]
+          do
+            echo "Instance refresh status: $instance_refresh_status"
+            sleep 10
+            instance_refresh_status=$(aws autoscaling describe-instance-refreshes --auto-scaling-group-name ${{vars.AUTO_SCALING_GROUP_NAME}} --region ${{secrets.AWS_REGION}} --query 'InstanceRefreshes[?StartTime!=`null`] | sort_by(@, &StartTime)[-1].Status' --output text)
+            if [ "$instance_refresh_status" == "Failed" || "$instance_refresh_status" == "Cancelled" ]
+            then
+              echo "Instance refresh failed or cancelled"
+              exit 1
+            fi
+          done
+          echo "Instance refresh status: $instance_refresh_status"
+          echo "Instance refresh completed successfully"
+
+
+
+          
+
+
+
 
 
